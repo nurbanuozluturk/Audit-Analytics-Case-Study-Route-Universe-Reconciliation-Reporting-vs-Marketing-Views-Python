@@ -1,0 +1,62 @@
+# Audit Analytics Case Study: Route Universe Reconciliation (Python)
+
+## Objective
+This project demonstrates an audit analytics approach to reconcile two operational route universes used for different purposes:
+- **Reporting view** (T_ONTIME_REPORTING.csv)
+- **Marketing view** (T_ONTIME_MARKETING.csv)
+
+The goal is to assess **coverage consistency**, identify **population definition differences**, and surface **exceptions** that may impact KPI reporting reliability and management decision-making.
+
+## Scope
+The analysis is performed at route level using the following identifiers:
+- `ORIGIN_AIRPORT_ID`
+- `DEST_AIRPORT_ID`
+
+The dataset contains route universe information (not delay minutes or cancellation reasons). Therefore, the focus is on **population completeness and consistency**, rather than operational performance metrics.
+
+## Methodology (Audit Tests)
+The workflow is designed as a repeatable set of audit-style tests:
+
+1. **Data Profiling & Integrity Checks**
+   - Missing value review
+   - Duplicate detection
+   - Basic consistency checks on key fields
+
+2. **Coverage Reconciliation**
+   - Comparison of unique route pairs between Reporting vs Marketing views
+   - Identification of routes present in Marketing but missing in Reporting (coverage gaps)
+
+3. **Airport Universe Reconciliation**
+   - Identification of airport IDs present only in the Marketing view
+
+4. **Overcounting / Population Definition Risk Flags**
+   - Route-level record count comparison
+   - Flags for routes where the Marketing view shows materially higher record counts than the Reporting view
+   - This supports risk-based monitoring and internal control-oriented discussions on reporting integrity
+
+## Outputs
+After execution, the script generates the following files under the `output/` folder:
+
+- `audit_kpi_summary.csv`  
+  High-level volume and uniqueness summary (routes, airports, null counts)
+
+- `exceptions_routes_marketing_only.csv`  
+  Unique routes present in Marketing but missing in Reporting
+
+- `exceptions_airports_marketing_only.csv`  
+  Airport IDs present only in the Marketing view
+
+- `exceptions_overcounting_flags.csv`  
+  Routes flagged for potential overcounting / population definition differences  
+  (based on threshold rules configurable in the script)
+
+- `audit_findings_for_report.txt`  
+  Report-ready numeric statements (copy/paste into a 1-page audit note)
+
+- `audit_findings_for_report.md` *(optional)*  
+  Same findings in Markdown format
+
+## How to Run
+### 1) Install requirements
+```bash
+pip install -r requirements.txt
